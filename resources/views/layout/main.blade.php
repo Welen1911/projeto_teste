@@ -41,7 +41,14 @@
             </div>
         </nav>
     </header>
-    @yield('content')
+    <div class="container-fluid">
+        <div class="row">
+            @if(session('msg'))
+                <p class="msg">{{ session('msg') }}</p>
+            @endif
+            @yield('content')
+        </div>
+    </div>
     <footer>
         <p>HDC Eventos &copy; 2023</p>
     </footer>
