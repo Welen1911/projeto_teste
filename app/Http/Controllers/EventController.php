@@ -71,8 +71,9 @@ class EventController extends Controller
     {
         $event = Event::findOrFail($id);
         $eventOwner = User::where('id', $event->user_id)->first()->toArray();
+        $participants = $event->users()->count();
 
-        return view('events.show', ['event' => $event, 'owner' => $eventOwner]);
+        return view('events.show', ['event' => $event, 'owner' => $eventOwner, 'participants' => $participants]);
     }
 
     public function dashboard() {
@@ -126,6 +127,16 @@ class EventController extends Controller
         $event->delete();
 
         return redirect('/dashboard')->with('msg', 'Evento excluído com sucesso!');
+    }
+
+    public function joinEvent($id) {
+        $user = auth()->user();
+
+        $user->eventsAsParticipant()->attach($id);
+
+        $event = Event::findOrFail($id);
+
+        return redirect('/dashboard')->with('msg', 'Presença confirmada no evento '. $event->title."!");
     }
 
 

@@ -12,6 +12,8 @@ Route::get('/events/{id}', [EventController::class, 'show']);
 
 Route::post('/events', [EventController::class, 'store'])->middleware('auth');
 
+Route::post('/events/join/{id}', [EventController::class, 'joinEvent'])->middleware('auth');
+
 Route::get('/user/{id}', [UserController::class, 'show']);
 
 Route::get('/dashboard', [EventController::class, 'dashboard'])->middleware('auth');

@@ -27,14 +27,18 @@
                 </p>
                 <p class="events-partipants">
                     <ion-icon name="people-outline"></ion-icon>
-                    X participantes
+                    {{ $participants }} @php echo $participants == 1 ? "participante" : "participantes"; @endphp
                 </p>
                 <p class="event-owner">
                     <ion-icon name="star-outline"></ion-icon>
                     {{ $owner['name'] }}
                     <a href="/user/{{ $owner['id'] }}">Ver perfil</a>
                 </p>
-                <a href="#" class="btn btn-primary" id="event-submit">Se inscrever</a>
+                <form action="/events/join/{{ $event->id }}" method="post">
+                    @csrf
+                <button type="submit" class="btn btn-primary" id="event-submit">Se inscrever</button>
+
+                </form>
                 @if($event->items != "")
                 <h3>O evento conta com:</h3>
                 <url id="items-list">
