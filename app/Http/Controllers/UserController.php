@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class UserController extends Controller
 {
     public function show($id) {
-        $user = User::findOrFail($id);
+        $user = User::findOrFail($id)->first()->toArray();
 
         return view('events.user', ['user' => $user]);
     }
