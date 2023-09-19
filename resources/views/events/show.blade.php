@@ -27,7 +27,7 @@
                 </p>
                 <p class="events-partipants">
                     <ion-icon name="people-outline"></ion-icon>
-                    {{ $participants }} @php echo $participants == 1 ? "participante" : "participantes"; @endphp
+                    {{ count($event->users) }} @php echo count($event->users) == 1 ? "participante" : "participantes"; @endphp
                 </p>
                 <p class="event-owner">
                     <ion-icon name="star-outline"></ion-icon>

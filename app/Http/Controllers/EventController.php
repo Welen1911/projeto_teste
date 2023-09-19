@@ -15,14 +15,14 @@ class EventController extends Controller
 
         if ($search) {
             $events = Event::where([
-                ['title', 'like', '%'.$search.'%'],
+                ['title', 'like', '%' . $search . '%'],
 
             ])->get();
 
-            return view('welcome', ['events' => $events, 'search' => $search ]);
+            return view('welcome', ['events' => $events, 'search' => $search]);
         } else {
             $events = Event::all();
-            return view('welcome', ['events' => $events, 'search' => $search ]);
+            return view('welcome', ['events' => $events, 'search' => $search]);
         }
     }
 
@@ -71,24 +71,35 @@ class EventController extends Controller
     {
         $event = Event::findOrFail($id);
         $eventOwner = User::where('id', $event->user_id)->first()->toArray();
-        $participants = $event->users()->count();
 
-        return view('events.show', ['event' => $event, 'owner' => $eventOwner, 'participants' => $participants]);
+        return view('events.show', ['event' => $event, 'owner' => $eventOwner]);
     }
 
-    public function dashboard() {
+    public function dashboard()
+    {
         $user = auth()->user();
+
         $events = $user->events;
-        return view('events.dashboard', ['events' => $events]);
+        $eventsParticipant = $user->eventsAsParticipant;
+
+        return view('events.dashboard', ['events' => $events, 'eventsAsParticipants' => $eventsParticipant]);
     }
 
-    public function edit($id) {
+    public function edit($id)
+    {
+        $user = auth()->user();
+
         $event = Event::findOrFail($id);
 
-        return view('events.update', ['event' => $event]);
+        if ($user->id != $event->user_id) {
+            return redirect('/');
+        } else {
+            return view('events.update', ['event' => $event]);
+        }
     }
 
-    public function update(Request $request) {
+    public function update(Request $request)
+    {
         $data = $request->all();
         $event = Event::findOrFail($request->id);
 
@@ -111,12 +122,13 @@ class EventController extends Controller
             $data['image'] = $event->image;
         }
 
-       $event->update($data);
+        $event->update($data);
 
         return redirect('/dashboard')->with('msg', 'Evento editado com sucesso!');
     }
 
-    public function destroy($id) {
+    public function destroy($id)
+    {
 
         $event = Event::findOrFail($id);
 
@@ -129,15 +141,14 @@ class EventController extends Controller
         return redirect('/dashboard')->with('msg', 'Evento excluído com sucesso!');
     }
 
-    public function joinEvent($id) {
+    public function joinEvent($id)
+    {
         $user = auth()->user();
 
         $user->eventsAsParticipant()->attach($id);
 
         $event = Event::findOrFail($id);
 
-        return redirect('/dashboard')->with('msg', 'Presença confirmada no evento '. $event->title."!");
+        return redirect('/dashboard')->with('msg', 'Presença confirmada no evento ' . $event->title . "!");
     }
-
-
 }
