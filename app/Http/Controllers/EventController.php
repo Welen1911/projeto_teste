@@ -69,10 +69,23 @@ class EventController extends Controller
 
     public function show($id)
     {
+        $user = auth()->user();
+        $userJoined = false;
+
+        if ($user) {
+            $userEvents = $user->eventsAsParticipant->toArray();
+
+            foreach ($userEvents as $uEvent) {
+                if ($uEvent['id'] == $id) {
+                    $userJoined = true;
+                }
+            }
+        }
+
         $event = Event::findOrFail($id);
         $eventOwner = User::where('id', $event->user_id)->first()->toArray();
 
-        return view('events.show', ['event' => $event, 'owner' => $eventOwner]);
+        return view('events.show', ['event' => $event, 'owner' => $eventOwner, 'userJoined' => $userJoined]);
     }
 
     public function dashboard()
@@ -129,8 +142,13 @@ class EventController extends Controller
 
     public function destroy($id)
     {
-
         $event = Event::findOrFail($id);
+        $users = user::all();
+        $uEvents = [];
+
+        foreach ($users as $user) {
+            $user->eventsAsParticipant()->detach($id);
+        }
 
         if ($event->image != "") {
             unlink(public_path('images/' . $event->image));
@@ -151,4 +169,27 @@ class EventController extends Controller
 
         return redirect('/dashboard')->with('msg', 'Presença confirmada no evento ' . $event->title . "!");
     }
+
+    public function leaveEvent($id) {
+        $user = auth()->user();
+
+        $user->eventsAsParticipant()->detach($id);
+
+        $event = Event::findOrFail($id);
+
+        return redirect('/dashboard')->with('err', 'Presença removida no evento ' . $event->title . "!");
+    }
+
+    // public function PEvents() {
+    //     // $users = User::all();
+
+    //     $users = user::all();
+    //     $uEvents = [];
+
+    //     foreach ($users as $user) {
+    //         $uEvents[] = $user->eventsAsParticipant()->detach(2);
+    //     }
+
+    //     return response()->json($uEvents, 200);
+    // }
 }

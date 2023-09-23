@@ -8,8 +8,15 @@ use Illuminate\Http\Request;
 class UserController extends Controller
 {
     public function show($id) {
-        $user = User::findOrFail($id)->first()->toArray();
+        $user = User::findOrFail($id);
 
-        return view('events.user', ['user' => $user]);
+        return response()->json($user, 200);
+        // return view('events.user', ['user' => $user]);
+    }
+
+    public function showAll() {
+        $users = User::all();
+
+        return response()->json($users, 200);
     }
 }

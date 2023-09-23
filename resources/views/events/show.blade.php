@@ -34,11 +34,15 @@
                     {{ $owner['name'] }}
                     <a href="/user/{{ $owner['id'] }}">Ver perfil</a>
                 </p>
-                <form action="/events/join/{{ $event->id }}" method="post">
+                @if(!$userJoined)
+                    <form action="/events/join/{{ $event->id }}" method="post">
                     @csrf
                 <button type="submit" class="btn btn-primary" id="event-submit">Se inscrever</button>
 
                 </form>
+                @else
+                    <p class="already-joined-msg">Você confirmou presença nesse evento!</p>
+                @endif
                 @if($event->items != "")
                 <h3>O evento conta com:</h3>
                 <url id="items-list">
